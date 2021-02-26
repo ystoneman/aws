@@ -164,6 +164,10 @@ function SetRetentionPolicy(){
 	for (( SetRetentionPolicyCount=$SetRetentionPolicyStart; SetRetentionPolicyCount<=$TotalLogGroups; SetRetentionPolicyCount++ ))
 	do
 		LogGroup=$(echo "$ParseLogGroups" | nl | grep -w [^0-9][[:space:]]$SetRetentionPolicyCount | cut -f2)
+		if echo "$LogGroup" | egrep -iq "controltower"; then
+		  echo "skipping controltower log group"
+		  continue
+		fi
 		if [[ $DEBUGMODE = "1" ]]; then
 			echo "o0o0o0o"
 			echo "Count: $SetRetentionPolicyCount"
