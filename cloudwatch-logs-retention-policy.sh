@@ -92,12 +92,8 @@ function GetRegions(){
 	if [[ $DEBUGMODE = "1" ]]; then
 		echo "Begin GetRegions Function"
 	fi
-	AWSregions=$(aws ec2 describe-regions --output=json --profile $profile 2>&1)
-	if echo "$AWSregions" | egrep -iq "error|not"; then
-		fail "$AWSregions"
-	else
-		ParseRegions=$(echo "$AWSregions" | jq '.Regions | .[] | .RegionName'| cut -d \" -f2 | sort)
-	fi
+	AWSregions=$(aws ec2 describe-regions --filters Name=opt-in-status,Values=opt-in-not-required,opted-in --output=json --profile $profile 2>&1)
+	ParseRegions=$(echo "$AWSregions" | jq '.Regions | .[] | .RegionName'| cut -d \" -f2 | sort)
 	TotalRegions=$(echo "$ParseRegions" | wc -l | rev | cut -d " " -f1 | rev)
 	if [[ $DEBUGMODE = "1" ]]; then
 		echo "Regions:"
